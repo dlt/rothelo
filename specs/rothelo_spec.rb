@@ -3,6 +3,7 @@ require '../game/rothelo'
 require '../game/board'
 
 describe(Rothelo) do
+	Button = Struct.new :x, :y	
 	before do
 		@game = Rothelo::Game.new
 	end
@@ -60,6 +61,15 @@ describe(Rothelo) do
 
 		play = [5, 5, 1]
 		@game.valid?(play).should be_true
+	end
+
+	it 'should apply changes after a valid play' do
+		@game.board[4, 2].should == 0
+		@game.valid?([4, 2, 1]).should be_true
+		button = Button.new 4, 2
+		@game.process button	
+		@game.altered_fields.should include [4, 2]
+		@game.board[4, 2].should == 1	
 	end
 
 end

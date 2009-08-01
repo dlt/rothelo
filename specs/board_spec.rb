@@ -37,5 +37,4 @@ describe(Rothelo::Board) do
 		@board.empty?(0, 0).should be_true
 	end
 
-	
 end

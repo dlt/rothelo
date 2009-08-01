@@ -8,7 +8,7 @@ class Gui
 	attr_reader :game, :table, :pixmaps, :buttons
 
   def initialize
-		@game 	 = Rothelo::Game.new
+		@game 	 = Rothelo::Game.new self
 		@buttons = []
 		init_window
 
@@ -50,7 +50,7 @@ class Gui
 		game.board.each_field do |x, y, field|
       button = RButton.new(x, y, pixmaps, field)
    		button.signal_connect('clicked') do |button| 
-     		game.process button, self
+     		game.process button
 	    end
       table.attach(button, x, x + 1, y, y + 1)
 			buttons << button
