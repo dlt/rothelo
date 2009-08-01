@@ -9,7 +9,7 @@ require '../game/rothelo'
 
 class Gui
   def initialize
-		@rothelo = Rothelo.new
+		@rothelo = Rothelo::Game.new
 		init_window
   end
 	
@@ -31,10 +31,7 @@ class Gui
     create_difficulty_selector box
 
     @table.attach(box, 0, 8, 9, 10)
-		puts 'each field'
 		@rothelo.board.each_field do |field, x, y|
-			puts field.inspect
-			
       button = RButton.new(x, y, pixmaps, field)
    		button.signal_connect('clicked') do |button| 
      		@rothelo.process button 
