@@ -34,14 +34,14 @@ module Rothelo
   	def each_field
 	 		for x in 0..7
   			for y in 0..7
-					yield self[x, y], x, y
+					yield x, y, self[x, y]
      	 end
     	end
 		end 
 
 		def coordinates(piece)
 			coords = []
-			self.each_field do |f, x, y|
+			self.each_field do |x, y, f|
 				coords << [x, y] if f == piece
 			end
 			coords

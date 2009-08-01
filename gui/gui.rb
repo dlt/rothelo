@@ -1,6 +1,3 @@
-# handles the gui interfaces and maps user actions
-# to logic handling classes
-
 require 'gtk2'
 require 'rbutton'
 require 'pixmaps'
@@ -8,11 +5,30 @@ require '../game/board'
 require '../game/rothelo'
 
 class Gui
+	attr_reader :game, :table, :pixmaps, :buttons
+
   def initialize
-		@rothelo = Rothelo::Game.new
+		@game 	 = Rothelo::Game.new
+		@buttons = []
 		init_window
+
+    @window.show
+    @window.show_all    
+    Gtk.main
   end
 	
+	def refresh
+		game.board.each_field do |x, y, field|
+			button = get_button(x, y)
+			button.set_pixmap button.pixtype(field)
+		end
+	end
+  
+	private
+	def get_button x, y
+		buttons.detect {|b| b.x == x && b.y == y}	
+	end
+
 	def init_window
     Gtk.init
     @window = Gtk::Window.new(Gtk::Window::TOPLEVEL)
@@ -20,26 +36,28 @@ class Gui
     @window.set_default_size(500, 500)
     init_window_signals 
     @window.show
+    @pixmaps = Pixmaps.new(@window.window)
+    @table 	 = Gtk::Table.new(10, 8, false)
     init_table 
 	end  
 
   def init_table
-    @table = Gtk::Table.new(10, 8, false)
-    @window.add @table
-    pixmaps = Pixmaps.new(@window.window)
-    box = Gtk::HBox.new(true, 5)
+    box	= Gtk::HBox.new(true, 5)
     create_difficulty_selector box
+    table.attach(box, 0, 8, 9, 10)
+    @window.add table
 
-    @table.attach(box, 0, 8, 9, 10)
-		@rothelo.board.each_field do |field, x, y|
+		game.board.each_field do |x, y, field|
       button = RButton.new(x, y, pixmaps, field)
    		button.signal_connect('clicked') do |button| 
-     		@rothelo.process button 
+     		game.process button, self
 	    end
-      @table.attach(button, x, x + 1, y, y + 1)
+      table.attach(button, x, x + 1, y, y + 1)
+			buttons << button
 		end
+    table.show_all
  	end
-	
+
 	def create_difficulty_selector(box)
     r1 = Gtk::RadioButton.new(nil, 'easy')
     r2 = Gtk::RadioButton.new(r1, 'hard')
@@ -67,14 +85,6 @@ class Gui
       exit
     end
   end
-  
-  def show
-    @table.show_all
-    @window.show
-    @window.show_all    
-    Gtk.main
-  end
 end
 
 gui = Gui.new
-gui.show

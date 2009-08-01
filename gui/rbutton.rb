@@ -6,10 +6,9 @@ class RButton < Gtk::Button
 
   def initialize(x, y, pixmaps, type = 0)
     super()
-		puts 'setting x y: ' + x.to_s + ' ' + y.to_s
 		@x = x
 		@y = y
-		@player = type
+		@player  = type
     @pixmaps = pixmaps
     set_pixmap pixtype(type)
 

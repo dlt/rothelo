@@ -7,10 +7,12 @@ module Rothelo
 			@current_player = 1
 		end
 
-		def process(button)
-			play = [button.x, button.y, self.current_player]
+		def process(button, gui)
+			play = [button.x, button.y, current_player]
 			puts valid? play
 			update_current_player
+			board[0, 0] = 1
+			gui.refresh
 		end
 
 		def valid?(play)

@@ -1,12 +1,11 @@
 require 'gtk2'
 
-# class Pixmaps: utility class that manages the pixmaps for the gamefield buttons
 class Pixmaps
   def initialize(window)
-    @pix = Hash.new
-    @mask = Hash.new
-    paths = ["/home/dlt/projects/ruby/rothelo/gui/images/"] # additional search paths
+    @pix, @mask	= {}, {}
+    paths = ["/home/dlt/projects/ruby/rothelo/gui/images/"]
     prefix = ''
+
     begin
       @pixmaps = {:player1 => 'tac.xpm', :player2 => "tic.xpm", :empty => 'toe.xpm'}
       @pixmaps.each do |id, fn|
@@ -21,7 +20,6 @@ class Pixmaps
     end
   end
 
-  # id should be "player1", "player2" or "empty"
   def create_pixmap(id)
     Gtk::Image::new(@pix[id], @mask[id])
   end
