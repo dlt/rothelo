@@ -6,7 +6,7 @@ describe(Rothelo::Board) do
 	end
 
 	it 'should have a valid initial othelo state when initialized' do
-		@board.each_field {|f, x, y| f.should == 0 unless [3, 4].include?(x) || [3, 4].include?(y)}
+		@board.each_field {|x, y, f| f.should == 0 unless [3, 4].include?(x) || [3, 4].include?(y)}
 		@board[4, 4].should == 1
 		@board[4, 3].should == 2
 		@board[3, 4].should == 2
