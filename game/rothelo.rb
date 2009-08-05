@@ -25,9 +25,10 @@ module Rothelo
 
 		def valid?(play)
       x, y, player = play
-			validate_horizontals(x, y, player) or
-      validate_verticals(x, y, player) or
-		  validate_diagonals(x, y, player)
+      horizontals  = validate_horizontals(x, y, player)
+      diagonals    = validate_diagonals(x, y, player)
+      verticals    = validate_verticals(x, y, player) 
+      diagonals || horizontals || verticals
 		end
 
 		private
@@ -37,25 +38,36 @@ module Rothelo
 			offset = 1
       valid  = false
 
-      changed x, y if last_play?(x, y, player)
-			while board[x, y - offset] == other && (y - offset) > 0
-        changed x, y - offset
-				if board[x, y - (offset + 1)] == player
-          changed x, y - (offset + 1)
-					valid = true
-				end
-				offset +=1
-			end 
-      
+      changed(x, y) if last_play?(x, y, player)
+      sandboxed do |stack|
+        apply = false
+        while (y - offset) > 0 && board[x, y - offset] == other 
+          stack.push [x, y - offset]
+          if board[x, y - (offset + 1)] == player
+            stack.push [x, y - (offset + 1)]
+            valid = true
+            apply = true
+          end
+          offset += 1
+        end
+        apply
+      end
+        
       offset = 1
-			while board[x, y + offset] == other && (y + offset) < 7
-        changed x, y + offset
-				if board[x, y + offset + 1] == player
-          changed x, y + offset + 1
-					valid = true	
-				end
-				offset += 1
-			end
+      sandboxed do |stack|
+        apply = false
+        while  (y + offset) < 7 && board[x, y + offset] == other 
+          stack.push [x, y + offset]
+          if board[x, y + offset + 1] == player
+            stack.push [x, y + offset + 1]
+            valid = true	
+            apply = true
+          end
+          offset += 1
+        end
+        apply
+      end
+
       valid
 		end
 
@@ -65,56 +77,107 @@ module Rothelo
       valid  = false
 			offset = 1
 
-      changed x, y if last_play?(x, y, player)
-			while board[x - offset, y] == other && (x - offset) > 0
-        changed x - offset, y
-				if board[x - (offset + 1), y] == player
-          changed x - (offset + 1), y
-          valid = true
-        end
-				offset += 1 
-			end 
-			
+      changed(x, y) if last_play?(x, y, player)
+
+      sandboxed do |stack|
+        while (x - offset) > 0 && board[x - offset, y] == other 
+          apply = false
+          stack.push [x - offset, y]
+          if board[x - (offset + 1), y] == player
+            stack.push [x - (offset + 1), y]
+            valid = true
+            apply = true
+          end
+          offset += 1 
+        end 
+        apply
+      end
+
 			offset = 1
-			while board[x + offset, y] == other && (x + offset) < 7
-        changed x + offset, y
-				if board[x + offset + 1, y] == player
-          changed x + offset + 1, y
-          valid = true
+      sandboxed do |stack|
+        apply = false
+        while (x + offset) < 7 && board[x + offset, y] == other 
+          stack.push [x + offset, y]
+          if board[x + offset + 1, y] == player
+            stack.push [x + offset + 1, y]
+            valid = true
+            apply = true
+          end
+          offset += 1
         end
-				offset += 1
-			end
+        apply
+      end
+
 			valid
 		end
 
 		def validate_diagonals(x, y, player)
 			return false unless board.empty?(x, y)
 			other  = get_other_player player
+      valid  = false
 			offset = 1
 			
-			while board[x - offset, y - offset] == other && (x - offset) > 0 && (y - offset) > 0
-				return true if board[x - (offset + 1), y - (offset + 1)] == player
-				offset += 1 
-			end 
+      changed(x, y) if last_play?(x, y, player)
+      sandboxed do |stack|
+        apply = false
+        while (x - offset) > 0 && (y - offset) > 0 && board[x - offset, y - offset] == other 
+          stack.push [x - offset, y - offset]
+          if board[x - (offset + 1), y - (offset + 1)] == player
+            stack.push [x - (offset + 1), y - (offset + 1)]
+            valid = true
+            apply = true
+          end
+          offset += 1 
+        end 
+        apply
+      end
 
 			offset = 1
-			while board[x - offset, y + offset] == other && (x - offset) > 0 && (y + offset) < 7
-				return true if board[x - (offset + 1), y + offset + 1] == player
-				offset += 1 
-			end 
+      sandboxed do |stack|
+        apply = false
+        while (x - offset) > 0 && (y + offset) < 7 && board[x - offset, y + offset] == other 
+          stack.push [x - offset, y + offset]
+          if board[x - (offset + 1), y + offset + 1] == player
+            stack.push [x - (offset + 1), y + offset + 1]
+            valid = true
+            apply = true
+          end
+          offset += 1 
+        end 
+        apply
+      end
 
 			offset = 1
-			while board[x + offset, y - offset] == other && (x + offset) < 7 && (y - offset) > 0
-				return true if board[x + offset + 1, y - (offset + 1)] == player
-				offset += 1 
-			end 
+      sandboxed do |stack|
+        apply = false
+        while (x + offset) < 7 && (y - offset) > 0 && board[x + offset, y - offset] == other 
+          stack.push [x + offset, y - offset]
+          if board[x + offset + 1, y - (offset + 1)] == player
+            stack.push [x + offset + 1, y - (offset + 1)]
+            valid = true
+            apply = true
+          end
+          offset += 1 
+        end 
+        apply
+      end
 
 			offset = 1
-			while board[x + offset, y + offset] == other && (x + offset) < 7 && (y  + offset) < 7
-				return true if board[x + offset + 1, y + offset + 1] == player
-				offset += 1 
-			end 
-			false
+      sandboxed do |stack|
+        apply = false
+        while (x + offset) < 7 && (y  + offset) < 7 && board[x + offset, y + offset] == other 
+          stack.push [x + offset, y + offset]
+          if board[x + offset + 1, y + offset + 1] == player
+            stack.push [x + offset + 1, y + offset + 1]
+            valid = true
+            apply = true
+          end
+          offset += 1 
+        end 
+        apply
+      end
+
+      valid
 		end
 
 		def get_other_player p
@@ -145,6 +208,12 @@ module Rothelo
 
     def last_play? x, y, player
       [x, y, player] == last_play
+    end
+
+    def sandboxed
+      stack = []
+      apply = yield(stack)
+      stack.each {|x, y| changed(x, y)} if apply
     end
 	end
 end

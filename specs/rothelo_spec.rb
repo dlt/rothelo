@@ -64,7 +64,7 @@ describe(Rothelo) do
 	end
 
 	it 'should apply changes after a valid play' do
-		@game.board[4, 2].should == 0
+		@game.board[4, 2].should be_zero
 		@game.valid?([4, 2, 1]).should be_true
 		button = Button.new 4, 2
 		@game.process button	
@@ -72,5 +72,24 @@ describe(Rothelo) do
 		@game.board[4, 4].should == 1	
 		@game.board[4, 3].should == 1	
 	end
+
+  it 'should discard changes made during a invalid row check' do
+		@game.board[4, 2].should be_zero
+		@game.valid?([4, 2, 1]).should be_true
+		button = Button.new 4, 2
+		@game.process button	
+		@game.board[4, 2].should == 1	
+		@game.board[4, 4].should == 1	
+		@game.board[4, 3].should == 1	
+
+    @game.current_player.should == 2
+    button2 = Button.new 3, 2
+    @game.board[3, 2].should be_zero
+    @game.valid?([3, 2, 2]).should be_true
+    @game.process button2
+    @game.board[3, 2].should == 2
+    @game.board[4, 2].should == 1
+    @game.board[4, 3].should == 1
+  end
 
 end
