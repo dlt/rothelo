@@ -53,7 +53,6 @@ class Gui
       button = RButton.new(x, y, pixmaps, field)
    		button.signal_connect('clicked') do |button| 
         puts "button x: %s - y: %s clicked" % [x, y]
-        puts 'PUTS' if button.x != x || button.y != y
      		game.process button
 	    end
       table.attach(button, x, x + 1, y, y + 1)
