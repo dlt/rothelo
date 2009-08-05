@@ -1,6 +1,8 @@
+$debug = true
 module Rothelo
 	class Game
-		attr_reader :board, :current_player, :gui, :altered_fields
+    attr_accessor :last_play
+		attr_reader   :board, :current_player, :gui, :altered_fields
 	
 		def initialize(gui = nil)
     	@board 					= Board.new
@@ -10,7 +12,9 @@ module Rothelo
 		end
 
 		def process(button)
-			play = [button.x, button.y, current_player]
+			play           = [button.x, button.y, current_player]
+      self.last_play = play
+
 			if valid? play
 				apply_changes current_player
 				update_current_player
@@ -20,88 +24,94 @@ module Rothelo
 		end
 
 		def valid?(play)
-			validate_horizontals(play) or
-			validate_verticals(play) or
-		  validate_diagonals(play)
+      x, y, player = play
+			validate_horizontals(x, y, player) or
+      validate_verticals(x, y, player) or
+		  validate_diagonals(x, y, player)
 		end
 
 		private
-		def validate_horizontals(play)
-			x, y, player = play
-
+		def validate_verticals(x, y, player)
 			return false unless board.empty?(x, y)
 			other  = get_other_player player
 			offset = 1
+      valid  = false
 
-			altered_fields << [x, y]
-			while board[x][y - offset] == other && (y - offset) > 0
-				altered_fields << [x, y - offset]
-				if board[x][y - (offset + 1)] == player
-					altered_fields << [x, y - (offset + 1)]
-					return true
-				end
-				offset += 1 
-			end 
-
-			offset = 1
-			while board[x][y + offset] == other && (y + offset) < 7
-				altered_fields << [x, y + offset]
-				if board[x][y + offset + 1] == player
-					altered_fields << [x, y + (offset + 1)]
-					return true	
+      changed x, y if last_play?(x, y, player)
+			while board[x, y - offset] == other && (y - offset) > 0
+        changed x, y - offset
+				if board[x, y - (offset + 1)] == player
+          changed x, y - (offset + 1)
+					valid = true
 				end
 				offset +=1
-			end
-			false
-		end
-
-		def validate_verticals(play)
-			x, y, player = play
-
-			return false unless board.empty?(x, y)
-			other  = get_other_player player
-			offset = 1
-
-			while board[x - offset][y] == other && (x - offset) > 0
-				return true if board[x - (offset + 1)][y] == player
-				offset += 1 
 			end 
-			
-			offset = 1
-			while board[x + offset][y] == other && (x + offset) < 7
-				return true if board[x + offset + 1][y] == player
+      
+      offset = 1
+			while board[x, y + offset] == other && (y + offset) < 7
+        changed x, y + offset
+				if board[x, y + offset + 1] == player
+          changed x, y + offset + 1
+					valid = true	
+				end
 				offset += 1
 			end
-			false
+      valid
 		end
 
-		def validate_diagonals(play)
-			x, y, player = play
+		def validate_horizontals(x, y, player)
+			return false unless board.empty?(x, y)
+			other  = get_other_player player
+      valid  = false
+			offset = 1
 
+      changed x, y if last_play?(x, y, player)
+			while board[x - offset, y] == other && (x - offset) > 0
+        changed x - offset, y
+				if board[x - (offset + 1), y] == player
+          changed x - (offset + 1), y
+          valid = true
+        end
+				offset += 1 
+			end 
+			
+			offset = 1
+			while board[x + offset, y] == other && (x + offset) < 7
+        changed x + offset, y
+				if board[x + offset + 1, y] == player
+          changed x + offset + 1, y
+          valid = true
+        end
+				offset += 1
+			end
+			valid
+		end
+
+		def validate_diagonals(x, y, player)
 			return false unless board.empty?(x, y)
 			other  = get_other_player player
 			offset = 1
 			
-			while board[x - offset][y - offset] == other && (x - offset) > 0 && (y - offset) > 0
-				return true if board[x - (offset + 1)][y - (offset + 1)] == player
+			while board[x - offset, y - offset] == other && (x - offset) > 0 && (y - offset) > 0
+				return true if board[x - (offset + 1), y - (offset + 1)] == player
 				offset += 1 
 			end 
 
 			offset = 1
-			while board[x - offset][y + offset] == other && (x - offset) > 0 && (y + offset) < 7
-				return true if board[x - (offset + 1)][y + offset + 1] == player
+			while board[x - offset, y + offset] == other && (x - offset) > 0 && (y + offset) < 7
+				return true if board[x - (offset + 1), y + offset + 1] == player
 				offset += 1 
 			end 
 
 			offset = 1
-			while board[x + offset][y - offset] == other && (x + offset) < 7 && (y - offset) > 0
-				return true if board[x + offset + 1][y - (offset + 1)] == player
+			while board[x + offset, y - offset] == other && (x + offset) < 7 && (y - offset) > 0
+				return true if board[x + offset + 1, y - (offset + 1)] == player
 				offset += 1 
 			end 
 
 			offset = 1
-			while board[x + offset][y + offset] == other && (x + offset) < 7 && (y  + offset) < 7
-				return true if board[x + offset + 1][y + offset + 1] == player
+			while board[x + offset, y + offset] == other && (x + offset) < 7 && (y  + offset) < 7
+				return true if board[x + offset + 1, y + offset + 1] == player
 				offset += 1 
 			end 
 			false
@@ -116,16 +126,25 @@ module Rothelo
 		def discard_changes
 			@altered_fields = []
 		end
-		
+	
+    def changed x, y
+      altered_fields << [y, x] unless altered_fields.include? [y, x]
+    end
+
 		def apply_changes player
-			altered_fields.uniq.each do |x, y|
+			altered_fields.each do |y, x|
 				board[x, y] = player
 			end
+      discard_changes
 			gui.refresh if gui
 		end
 
 		def update_current_player
 			@current_player = 3 - @current_player
 		end
+
+    def last_play? x, y, player
+      [x, y, player] == last_play
+    end
 	end
 end

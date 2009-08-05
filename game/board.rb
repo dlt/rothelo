@@ -16,19 +16,19 @@ module Rothelo
   	end
   
   	def []=(x,y,z)
-    	@board[x][y] = z
+    	@board[y][x] = z
   	end
   
   	def [](x = nil, y = nil)
 			raise ArgumentError, 'Should inform either x or y' unless x || y			
-			if y.nil?
-				return @board[x]
-			end
 			if x.nil?
-				y_axis = (0..7).collect {|x| @board[x][y]}
-				return y_axis
+				return @board[y]
 			end
-    	@board[x][y]
+			if y.nil?
+				x_axis = (0..7).collect {|yy| @board[yy][x]}
+				return x_axis
+			end
+    	@board[y][x]
   	end
 
   	def each_field

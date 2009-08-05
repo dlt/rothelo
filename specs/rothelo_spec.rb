@@ -68,8 +68,9 @@ describe(Rothelo) do
 		@game.valid?([4, 2, 1]).should be_true
 		button = Button.new 4, 2
 		@game.process button	
-		@game.altered_fields.should include [4, 2]
 		@game.board[4, 2].should == 1	
+		@game.board[4, 4].should == 1	
+		@game.board[4, 3].should == 1	
 	end
 
 end

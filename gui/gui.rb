@@ -4,11 +4,12 @@ require 'pixmaps'
 require '../game/board'
 require '../game/rothelo'
 
+$debug = true
 class Gui
 	attr_reader :game, :table, :pixmaps, :buttons
 
   def initialize
-		@game 	 = Rothelo::Game.new self
+		@game 	 = Rothelo::Game.new(self)
 		@buttons = []
 		init_window
 
@@ -18,6 +19,7 @@ class Gui
   end
 	
 	def refresh
+    puts "refreshing"
 		game.board.each_field do |x, y, field|
 			button = get_button(x, y)
 			button.set_pixmap button.pixtype(field)
@@ -50,6 +52,8 @@ class Gui
 		game.board.each_field do |x, y, field|
       button = RButton.new(x, y, pixmaps, field)
    		button.signal_connect('clicked') do |button| 
+        puts "button x: %s - y: %s clicked" % [x, y]
+        puts 'PUTS' if button.x != x || button.y != y
      		game.process button
 	    end
       table.attach(button, x, x + 1, y, y + 1)
