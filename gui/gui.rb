@@ -19,7 +19,6 @@ class Gui
   end
 	
 	def refresh
-    puts "refreshing"
 		game.board.each_field do |x, y, field|
 			button = get_button(x, y)
 			button.set_pixmap button.pixtype(field)
