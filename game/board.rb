@@ -1,18 +1,11 @@
 module Rothelo
 	class Board
-	  def initialize
-  	  @board = Array.new(8)
-    	@board.map! {|row| row = Array.new 8}
-    
-	    for x in 0..7
-  	    for y in 0..7
-    	    @board[x][y] = 0
-      	end
-	    end
- 		  @board[4][4] = 1
-    	@board[3][3] = 1
-    	@board[3][4] = 2
-    	@board[4][3] = 2        
+	  def initialize(board_copy = nil)
+      unless board_copy
+        init_new_board
+      else
+        @board = board_copy
+      end
   	end
   
   	def []=(x,y,z)
@@ -54,6 +47,28 @@ module Rothelo
 		def empty?(x, y)
 			self[x, y].zero?
 		end
+
+    def copy
+      newboard = @board.collect {|row| row.dup}
+      Board.new newboard
+    end
+    
+    private
+
+    def init_new_board
+  	  @board = Array.new(8)
+    	@board.map! {|row| row = Array.new 8}
+    
+	    for x in 0..7
+  	    for y in 0..7
+    	    @board[x][y] = 0
+      	end
+	    end
+ 		  @board[4][4] = 1
+    	@board[3][3] = 1
+    	@board[3][4] = 2
+    	@board[4][3] = 2        
+    end
 
 	end
 end
