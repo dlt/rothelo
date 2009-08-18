@@ -35,6 +35,26 @@ describe(Rothelo::Board) do
 
 	it 'should inform if a field is empty' do
 		@board.empty?(0, 0).should be_true
+		@board.empty?(4, 4).should be_false
 	end
+
+  it '#copy should return a board copy' do
+    copy = @board.copy
+    for x in 0..7
+      copy[x].object_id.should_not == @board[x].object_id
+      for y in 0..7
+        copy[x, y].should == @board[x, y]
+      end
+    end
+  end
+
+  it 'changing a board copy should not change the original one' do
+    copy = @board.copy
+    copy[0, 0].should be_zero
+    @board[0, 0].should be_zero
+    copy[0, 0] = 1
+    copy[0, 0].should == 1
+    @board[0, 0].should_not == 1
+  end
 
 end
