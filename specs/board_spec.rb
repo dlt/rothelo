@@ -63,4 +63,13 @@ describe(Rothelo::Board) do
     @board.empty_fields.should == 59
   end
 
+  it 'should have an equality method' do
+    @b1 = Rothelo::Board.new
+    @b2 = Rothelo::Board.new
+
+    (@b1 == @b2).should be_true
+    (@b1 == @b1.copy).should be_true
+  end
+
+
 end

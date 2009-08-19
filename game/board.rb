@@ -60,6 +60,13 @@ module Rothelo
       end
       count
     end
+
+    def ==(other)
+      each_field do |x, y, player|
+        return false if other[x, y] != player
+      end
+      true
+    end
     
     private
     def init_new_board
