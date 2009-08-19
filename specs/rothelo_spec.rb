@@ -124,6 +124,7 @@ describe(Rothelo) do
 
   it 'it should play on #initialize if first player is a robot' do
     @ia_game = Rothelo::Game.new(nil, 1 => {:intelligence => :Dummy}, 2 => {:intelligence => :Human}, :first => 1)
+    @ia_game.init
     @ia_game.board.empty_fields.should == 59
   end
 

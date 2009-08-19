@@ -1,3 +1,5 @@
+require File.dirname(__FILE__) + '/../game/board'
+require File.dirname(__FILE__) + '/../heuristics/heuristics'
 module Rothelo
 	class Game
     attr_accessor :last_play, :board
@@ -9,9 +11,11 @@ module Rothelo
 			@current_player = options[:first] || 1
 			@altered_fields = []
 			@gui 						= gui
-
-      init_ia if has_ia_player?
 		end
+
+    def init
+      init_ia if has_ia_player?
+    end
 
 		def process(button, board_copy = nil)
 			play = button.x, button.y, current_player
@@ -23,6 +27,7 @@ module Rothelo
       else
         discard_changes
       end
+      @ia.change_game_board if ia_player? current_player
 		end
 
 		def valid? play
@@ -236,10 +241,10 @@ module Rothelo
     end
 
     def init_ia
+      @ia = Rothelo::Heuristics::Dummy.new self
       if ia_player? @current_player
+        @ia.change_game_board
       end
-      #@ia = Rothelo::Heuristics::Dummy.new
     end
-
 	end
 end

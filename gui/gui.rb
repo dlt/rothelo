@@ -8,12 +8,13 @@ class Gui
 	attr_reader :game, :table, :pixmaps, :buttons
 
   def initialize
-		@game 	 = Rothelo::Game.new(self)
+		@game 	 = Rothelo::Game.new(self, 1 => {:intelligence => :Dummy}, :first => 1)
 		@buttons = []
 		init_window
 
     @window.show
     @window.show_all    
+    @game.init
     Gtk.main
   end
 	
