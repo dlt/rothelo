@@ -1,5 +1,5 @@
 require 'gtk2'
-require '../game/rothelo'
+require File.dirname(__FILE__) + '/../game/rothelo'
 
 class RButton < Gtk::Button
 	attr_reader :x, :y, :player

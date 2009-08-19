@@ -1,6 +1,6 @@
 require 'pp'
-require '../game/rothelo'
-require '../game/board'
+require File.dirname(__FILE__) + '/../game/rothelo'
+require File.dirname(__FILE__) + '/../game/board'
 
 describe(Rothelo) do
 	Button = Struct.new :x, :y	

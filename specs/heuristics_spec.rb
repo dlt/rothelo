@@ -1,7 +1,10 @@
 require 'pp'
-require '../heuristics'
+require File.dirname(__FILE__) + '/../heuristics/heuristics'
 
-describe(Heuristics) do
+describe(Rothelo::Heuristics) do
+  describe(Rothelo::Heuristics::Dummy) do
+  end
+
 end
 
 

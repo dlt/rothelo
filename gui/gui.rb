@@ -1,8 +1,7 @@
 require 'gtk2'
 require 'rbutton'
 require 'pixmaps'
-require '../game/board'
-require '../game/rothelo'
+require File.dirname(__FILE__) + '/../game/rothelo'
 
 $debug = true
 class Gui

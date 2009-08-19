@@ -1,4 +1,4 @@
-require '../game/board'
+require File.dirname(__FILE__) + '/../game/board'
 
 describe(Rothelo::Board) do
 	before do
