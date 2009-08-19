@@ -21,14 +21,15 @@ module Rothelo
 		def process(button, board_copy = nil)
 			play = button.x, button.y, current_player
       self.last_play = play
-
-      if valid? play
+    
+      if valid?(play) 
         apply_changes current_player
         update_current_player
       else
         discard_changes
       end
-      @ia.play! if ia_player? current_player
+
+      @ia.play! if !over? and ia_player?(current_player)
 		end
 
 		def valid? play
@@ -45,10 +46,23 @@ module Rothelo
     end
 
     def heuristic(player)
-      player_opts = options[player]
-      player_opts[:intelligence]
+      options[player][:intelligence]
+    end
+
+    def over?
+      board.each_field do |x, y, player|
+        return false if valid?([x, y, current_player])
+      end
+      true
     end
     
+    def has_ia_player?
+      options.values.each do |val|
+        return true if val.is_a?(Hash) and val[:intelligence] and val[:intelligence] != :Human
+      end
+      false
+    end
+
 		private
 		def validate_verticals(x, y, player)
 			return false unless board.empty?(x, y)
@@ -232,13 +246,6 @@ module Rothelo
       stack = []
       apply = yield(stack)
       stack.each {|x, y| changed(x, y)} if apply
-    end
-
-    def has_ia_player?
-      @options.values.each do |val|
-        return true if val.is_a?(Hash) and val[:intelligence] and val[:intelligence] != :Human
-      end
-      false
     end
 
     def init_ia

@@ -85,6 +85,7 @@ describe(Rothelo) do
     @game.current_player.should == 2
     button2 = Button.new 3, 2
     @game.board[3, 2].should be_zero
+    @game.has_ia_player?.should be_false
     @game.valid?([3, 2, 2]).should be_true
     @game.process button2
     @game.board[3, 2].should == 2
@@ -126,6 +127,13 @@ describe(Rothelo) do
     @ia_game = Rothelo::Game.new(nil, 1 => {:intelligence => :Dummy}, 2 => {:intelligence => :Human}, :first => 1)
     @ia_game.init
     @ia_game.board.empty_fields.should == 59
+  end
+
+  it 'should have a #over? method that says if game is in a terminal state' do
+    @game.over?.should be_false
+    @ia_game = Rothelo::Game.new(nil, 1 => {:intelligence => :Dummy}, 2 => {:intelligence => :Dummy})
+    @ia_game.init
+    @ia_game.over?.should be_true
   end
 
 end

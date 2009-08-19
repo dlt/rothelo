@@ -20,6 +20,19 @@ describe(Rothelo::Heuristics) do
       @game.board.empty?(x, y).should be_false
     end
   end
+
+  describe(Rothelo::Heuristics::AlphaBetaPruning) do
+    before(:all) do
+      @game = Rothelo::Game.new
+      @alphabeta = Rothelo::Heuristics::AlphaBetaPruning.new @game
+    end
+
+    it 'should find a new valid next play' do
+      play = @alphabeta.next_play
+      @game.valid?(play).should be_true
+    end
+  end
+
 end
 
 
