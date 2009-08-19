@@ -52,9 +52,16 @@ module Rothelo
       newboard = @board.collect {|row| row.dup}
       Board.new newboard
     end
+
+    def empty_fields
+      count = 0
+      each_field do |x, y|
+        count += 1 if empty?(x, y)
+      end
+      count
+    end
     
     private
-
     def init_new_board
   	  @board = Array.new(8)
     	@board.map! {|row| row = Array.new 8}
@@ -69,7 +76,6 @@ module Rothelo
     	@board[3][4] = 2
     	@board[4][3] = 2        
     end
-
 	end
 end
 

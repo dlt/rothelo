@@ -57,4 +57,10 @@ describe(Rothelo::Board) do
     @board[0, 0].should_not == 1
   end
 
+  it '#empty_fields should return the number of empty fields' do
+    @board.empty_fields.should == 60
+    @board[1,1] = 1
+    @board.empty_fields.should == 59
+  end
+
 end
