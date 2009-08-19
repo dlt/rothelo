@@ -1,36 +1,52 @@
-$debug = true
 module Rothelo
 	class Game
-    attr_accessor :last_play
-		attr_reader   :board, :current_player, :gui, :altered_fields
+    attr_accessor :last_play, :board
+		attr_reader   :gui, :altered_fields, :options, :current_player
 	
-		def initialize(gui = nil)
+		def initialize(gui = nil, options = {})
     	@board 					= Board.new
-			@current_player = 1
+      @options        = options
+			@current_player = options[:first] || 1
 			@altered_fields = []
 			@gui 						= gui
+      if has_ia_player?
+        init_ia
+        if ia_player? @current_player
+        end
+      end
+
 		end
 
-		def process(button)
-			play           = [button.x, button.y, current_player]
+		def process(button, board_copy = nil)
+			play = button.x, button.y, current_player
       self.last_play = play
 
-			if valid? play
-				apply_changes current_player
-				update_current_player
-			else
-				discard_changes
-			end
+      if valid? play
+        apply_changes current_player
+        update_current_player
+      else
+        discard_changes
+      end
 		end
 
-		def valid?(play)
+		def valid? play
       x, y, player = play
+
       horizontals  = validate_horizontals(x, y, player)
       diagonals    = validate_diagonals(x, y, player)
       verticals    = validate_verticals(x, y, player) 
       diagonals || horizontals || verticals
 		end
 
+    def ia_player?(player)
+      options[player] and options[player][:intelligence] != :Human
+    end
+
+    def heuristic(player)
+      player_opts = options[player]
+      player_opts[:intelligence]
+    end
+    
 		private
 		def validate_verticals(x, y, player)
 			return false unless board.empty?(x, y)
@@ -215,5 +231,17 @@ module Rothelo
       apply = yield(stack)
       stack.each {|x, y| changed(x, y)} if apply
     end
+
+    def has_ia_player?
+      @options.values.each do |val|
+        return true if val.is_a?(Hash) and val[:intelligence] and val[:intelligence] != :Human
+      end
+      false
+    end
+
+    def init_ia
+      #@ia = Rothelo::Heuristics::Dummy.new
+    end
+
 	end
 end

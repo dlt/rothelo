@@ -92,4 +92,39 @@ describe(Rothelo) do
     @game.board[4, 3].should == 1
   end
 
+  it 'should have options settings for an artificial intelligent player' do
+    @ia_game = Rothelo::Game.new(nil, :player1 => {:intelligence => :human}, :player2 => {:intelligence => :Dummy})
+  end
+
+  it 'should apply ia options' do
+    @ia_game = Rothelo::Game.new(nil, 1 => {:intelligence => :Human}, 2 => {:intelligence => :Dummy})
+    @ia_game.ia_player?(1).should be_false
+    @ia_game.ia_player?(2).should be_true
+    @ia_game.heuristic(2).should == :Dummy
+    @ia_game.heuristic(1).should == :Human
+
+
+    @ia_game = Rothelo::Game.new(nil, 1 => {:intelligence => :AlphaBetaPruning}, 2 => {:intelligence => :Dummy}, :first => 1)
+    @ia_game.ia_player?(1).should be_true
+    @ia_game.ia_player?(2).should be_true
+    @ia_game.heuristic(1).should == :AlphaBetaPruning
+    @ia_game.heuristic(2).should == :Dummy
+  end
+
+  it 'should set first players based in options' do
+    @ia_game = Rothelo::Game.new
+    @ia_game.current_player.should == 1
+
+    @ia_game = Rothelo::Game.new(nil, 1 => {:intelligence => :Human}, 2 => {:intelligence => :Dummy}, :first => 1)
+    @ia_game.current_player.should == 1
+
+    @ia_game = Rothelo::Game.new(nil, 2 => {:intelligence => :Human}, 1 => {:intelligence => :Dummy}, :first => 2)
+    @ia_game.current_player.should == 2
+  end
+
+  it 'it should play on #initialize if first player is a robot' do
+    @ia_game = Rothelo::Game.new(nil, 1 => {:intelligence => :Dummy}, 2 => {:intelligence => :Human}, :first => 1)
+    @ia_game.board.empty_fields.should == 59
+  end
+
 end
