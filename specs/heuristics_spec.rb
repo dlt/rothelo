@@ -11,17 +11,15 @@ describe(Rothelo::Heuristics) do
     end
 
     it 'should find a new valid next play' do
-
       play = @dummy.next_play
       @game.valid?(play).should be_true
     end
 
     it 'should change the board after a play' do
-      x, y = @dummy.change_game_board
+      x, y = @dummy.play!
       @game.board.empty?(x, y).should be_false
     end
   end
-
 end
 
 

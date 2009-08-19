@@ -1,6 +1,6 @@
 require 'gtk2'
-require 'rbutton'
-require 'pixmaps'
+require File.dirname(__FILE__) + '/rbutton'
+require File.dirname(__FILE__) + '/pixmaps'
 require File.dirname(__FILE__) + '/../game/rothelo'
 
 $debug = true
@@ -8,7 +8,7 @@ class Gui
 	attr_reader :game, :table, :pixmaps, :buttons
 
   def initialize
-		@game 	 = Rothelo::Game.new(self, 1 => {:intelligence => :Dummy}, :first => 1)
+		@game 	 = Rothelo::Game.new(self, 1 => {:intelligence => :Dummy}, :first => 2)
 		@buttons = []
 		init_window
 

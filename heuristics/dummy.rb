@@ -15,7 +15,7 @@ module Rothelo
         end
       end
 
-      def change_game_board
+      def play!
         x, y = next_play
         bt = MockButton.new(x, y)
         game.process bt

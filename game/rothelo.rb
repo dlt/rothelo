@@ -1,5 +1,6 @@
 require File.dirname(__FILE__) + '/../game/board'
 require File.dirname(__FILE__) + '/../heuristics/heuristics'
+
 module Rothelo
 	class Game
     attr_accessor :last_play, :board
@@ -27,7 +28,7 @@ module Rothelo
       else
         discard_changes
       end
-      @ia.change_game_board if ia_player? current_player
+      @ia.play! if ia_player? current_player
 		end
 
 		def valid? play
@@ -243,7 +244,7 @@ module Rothelo
     def init_ia
       @ia = Rothelo::Heuristics::Dummy.new self
       if ia_player? @current_player
-        @ia.change_game_board
+        @ia.play!
       end
     end
 	end
