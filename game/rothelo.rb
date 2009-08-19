@@ -9,12 +9,8 @@ module Rothelo
 			@current_player = options[:first] || 1
 			@altered_fields = []
 			@gui 						= gui
-      if has_ia_player?
-        init_ia
-        if ia_player? @current_player
-        end
-      end
 
+      init_ia if has_ia_player?
 		end
 
 		def process(button, board_copy = nil)
@@ -240,6 +236,8 @@ module Rothelo
     end
 
     def init_ia
+      if ia_player? @current_player
+      end
       #@ia = Rothelo::Heuristics::Dummy.new
     end
 
