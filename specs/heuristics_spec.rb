@@ -29,7 +29,12 @@ describe(Rothelo::Heuristics) do
 
     it 'should find a new valid next play' do
       play = @alphabeta.next_play
+      play.push @game.current_player
       @game.valid?(play).should be_true
+    end
+
+    it 'should have a #evaluate_state method to evaluate board states based on the number/position of pieces' do
+      @alphabeta.evaluate_state(@game).should == 0
     end
   end
 

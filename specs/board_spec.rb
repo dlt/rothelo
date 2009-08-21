@@ -69,6 +69,9 @@ describe(Rothelo::Board) do
 
     (@b1 == @b2).should be_true
     (@b1 == @b1.copy).should be_true
+    @b2[0, 0] = 1
+
+    (@b1 == @b2).should be_false
   end
 
 

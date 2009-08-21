@@ -136,4 +136,23 @@ describe(Rothelo) do
     @ia_game.over?.should be_true
   end
 
+  it 'should return all the possible next board states' do
+    oldboard = @game.board
+    count = 0
+    successors = []
+
+    @game.successors do |x, y, child|
+      count += 1
+      successors << [x, y]
+      child.current_player.should_not == @game.current_player
+      child.successors do |x, y, child2|
+        child.current_player.should_not == child2.current_player
+      end
+    end
+
+    expected = [[5, 3], [3, 5], [2, 4], [4, 2]]
+    successors.sort.should == expected.sort
+    @game.board.should == oldboard
+  end
+
 end

@@ -51,9 +51,9 @@ class Gui
 		game.board.each_field do |x, y, field|
       button = RButton.new(x, y, pixmaps, field)
    		button.signal_connect('clicked') do |button| 
-        puts "button x: %s - y: %s clicked" % [x, y]
      		game.process button
 	    end
+
       table.attach(button, x, x + 1, y, y + 1)
 			buttons << button
 		end
@@ -63,6 +63,7 @@ class Gui
 	def create_difficulty_selector(box)
     r1 = Gtk::RadioButton.new(nil, 'easy')
     r2 = Gtk::RadioButton.new(r1, 'hard')
+
     r1.signal_connect('toggled') do
       if r1.active?
 		    puts 'Implement - Easy selected!'

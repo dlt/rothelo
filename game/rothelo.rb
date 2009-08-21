@@ -3,13 +3,13 @@ require File.dirname(__FILE__) + '/../heuristics/heuristics'
 
 module Rothelo
 	class Game
-    attr_accessor :last_play, :board
-		attr_reader   :gui, :altered_fields, :options, :current_player
+    attr_accessor :last_play, :board, :current_player
+		attr_reader   :gui, :altered_fields, :options
 	
-		def initialize(gui = nil, options = {})
+		def initialize(gui = nil, options = nil)
     	@board 					= Board.new
-      @options        = options
-			@current_player = options[:first] || 1
+      @options        = options || {}
+			@current_player = @options[:first] || 1
 			@altered_fields = []
 			@gui 						= gui
 		end
@@ -18,18 +18,20 @@ module Rothelo
       init_ia if has_ia_player?
     end
 
-		def process(button, board_copy = nil)
-			play = button.x, button.y, current_player
+		def process(button)
+			play           = button.x, button.y, current_player
       self.last_play = play
     
-      if valid?(play) 
+      discard_changes
+      if valid?(play)
         apply_changes current_player
         update_current_player
-      else
-        discard_changes
-      end
 
-      @ia.play! if !over? and ia_player?(current_player)
+        if !over? and ia_player?(current_player)
+          @ia.play!
+        end
+      end
+      discard_changes
 		end
 
 		def valid? play
@@ -61,6 +63,19 @@ module Rothelo
         return true if val.is_a?(Hash) and val[:intelligence] and val[:intelligence] != :Human
       end
       false
+    end
+
+    def successors
+      board.each_field do |x, y, p|
+        game                = Game.new
+        game.board          = board.copy
+        game.current_player = current_player
+
+        if game.valid?([x, y, current_player])
+          game.process(Heuristics::MockButton.new(x, y))
+          yield x, y, game
+        end
+      end
     end
 
 		private
@@ -249,10 +264,14 @@ module Rothelo
     end
 
     def init_ia
-      @ia = Rothelo::Heuristics::Dummy.new self
-      if ia_player? @current_player
+      @ia = iafactory
+      if ia_player? current_player
         @ia.play!
       end
+    end
+
+    def iafactory
+      Heuristics::AlphaBetaPruning.new self
     end
 	end
 end
