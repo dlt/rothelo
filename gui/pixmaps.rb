@@ -3,7 +3,8 @@ require 'gtk2'
 class Pixmaps
   def initialize(window)
     @pix, @mask	= {}, {}
-    paths = ["/home/dlt/projects/ruby/rothelo/gui/images/"]
+    #paths = ["/home/dlt/projects/ruby/rothelo/gui/images/"]
+    paths = [File.dirname(__FILE__) + '/images/']
     prefix = ''
 
     begin
