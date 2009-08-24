@@ -9,6 +9,7 @@ class Gui
 
   def initialize
 		@game 	 = Rothelo::Game.new(self, 2 => {:intelligence => :Dummy}, :first => 1)
+		#@game 	 = Rothelo::Game.new(self, :first => 1)
 		@buttons = []
 		init_window
 

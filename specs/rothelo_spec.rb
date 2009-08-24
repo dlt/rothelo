@@ -65,7 +65,9 @@ describe(Rothelo) do
 
 	it 'should apply changes after a valid play' do
 		@game.board[4, 2].should be_zero
-		@game.valid?([4, 2, 1]).should be_true
+    10.times {
+  		@game.valid?([4, 2, 1]).should be_true
+    }
 		button = Button.new 4, 2
 		@game.process button	
 		@game.board[4, 2].should == 1	

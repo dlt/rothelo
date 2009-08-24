@@ -18,20 +18,29 @@ module Rothelo
 			init_ia if has_ia_player?
 		end
 
-		def process(button)
+
+    def pre_processing
+      discard_changes
+    end
+
+    def post_processing
+      discard_changes
+      unless over? 
+        @ia.play! if ia_player?(current_player)
+      end
+    end
+
+		def process button
+      pre_processing
 			play           = button.x, button.y, current_player
 			self.last_play = play
 		
-			discard_changes
 			if valid?(play)
 				apply_changes current_player
 				update_current_player
-
-				if !over? and ia_player?(current_player)
-					@ia.play!
-				end
 			end
-			discard_changes
+
+      post_processing
 		end
 
 		def valid? play
@@ -40,7 +49,7 @@ module Rothelo
 			horizontals  = validate_horizontals(x, y, player)
 			diagonals    = validate_diagonals(x, y, player)
 			verticals    = validate_verticals(x, y, player) 
-			diagonals || horizontals || verticals
+			diagonals or horizontals or verticals
 		end
 
 		def ia_player?(player)
@@ -65,18 +74,26 @@ module Rothelo
 			false
 		end
 
-		def successors
-			board.each_field do |x, y, p|
-				game                = Game.new
-				game.board          = board.copy
-				game.current_player = current_player
+    def successors
+      ss = []
+      g = Game.new
+      g.board = board.copy
+      g.current_player = current_player
 
-				if game.valid?([x, y, current_player])
-					game.process(Heuristics::MockButton.new(x, y))
-					yield x, y, game
-				end
-			end
-		end
+      board.each_field do |x, y, p|
+        ply = [x, y, current_player]
+        ss << ply if g.valid? ply
+      end
+
+      pp "sucessors: #{ss.size}"
+      
+      #shuffle to avoid playing always in one 'side' of the board
+      ss.shuffle.each do |ply|
+        x, y, p = ply
+        g.process  Heuristics::MockButton.new(x, y)
+        yield(x, y, g)
+      end
+    end
 
 		private
 		def validate_verticals(x, y, player)
@@ -234,7 +251,7 @@ module Rothelo
 		end
 		
 		def discard_changes
-			@altered_fields = []
+			@altered_fields.clear
 		end
 	
 		def changed x, y
@@ -245,8 +262,8 @@ module Rothelo
 			altered_fields.each do |y, x|
 				board[x, y] = player
 			end
+			gui.refresh and puts 'refreshing gui' if gui
 			discard_changes
-			gui.refresh if gui
 		end
 
 		def update_current_player
@@ -272,6 +289,7 @@ module Rothelo
 
 		def iafactory
 			Heuristics::AlphaBetaPruning.new self
+      #Heuristics::Dummy.new self
 		end
 	end
 end

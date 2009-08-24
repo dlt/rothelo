@@ -5,7 +5,7 @@ require File.dirname(__FILE__) + '/../game/rothelo'
 describe(Rothelo::Heuristics) do
 
   describe(Rothelo::Heuristics::Dummy) do
-    before(:all) do
+    before(:each) do
       @game = Rothelo::Game.new
       @dummy = Rothelo::Heuristics::Dummy.new @game 
     end
