@@ -1,5 +1,7 @@
 module Rothelo
 	class Board
+    attr_reader :board
+    
 	  def initialize(board_copy = nil)
       unless board_copy
         init_new_board
@@ -62,10 +64,7 @@ module Rothelo
     end
 
     def ==(other)
-      each_field do |x, y, player|
-        return false if other[x, y] != player
-      end
-      true
+      board.hash == other.board.hash
     end
     
     private

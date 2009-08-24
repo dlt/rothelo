@@ -85,8 +85,6 @@ module Rothelo
         ss << ply if g.valid? ply
       end
 
-      pp "sucessors: #{ss.size}"
-      
       #shuffle to avoid playing always in one 'side' of the board
       ss.shuffle.each do |ply|
         x, y, p = ply
