@@ -14,8 +14,8 @@ class RButton < Gtk::Button
   end
   
   def set_pixmap(id)
-    #puts 'setando pixmap ' + id.to_s + ' p botao x/y ' + x.to_s + ' ' + y.to_s
     if @pixbutton
+      puts "removeu botao #{x} #{y}"
       remove(@pixbutton)           
       @pixbutton.destroy
     end

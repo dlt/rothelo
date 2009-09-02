@@ -18,7 +18,6 @@ module Rothelo
 			init_ia if has_ia_player?
 		end
 
-
     def pre_processing
       discard_changes
     end

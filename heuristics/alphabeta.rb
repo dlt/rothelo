@@ -1,4 +1,5 @@
 require 'pp'
+require File.dirname(__FILE__) + '/../ext/alphabeta'
 module Rothelo
   module Heuristics
     class AlphaBetaPruning
