@@ -52,10 +52,13 @@ static VALUE sum_points(VALUE block_params) {
   y = FIX2INT(array_ptr[1]);
   player = FIX2INT(array_ptr[2]);
 
-  if (player != 0) total_score += score_points(x, y, player);
+  if (player != 0)  {
+    total_score += score_points(x, y, player);
+  }
 
-  return Qnil;
+  return rb_float_new(total_score);
 }
+
 static VALUE evaluate_game_opt(VALUE self, VALUE game) {
   current_player = NUM2INT(rb_funcall(game, rb_intern("current_player"), 0));
   VALUE board = rb_funcall(game, rb_intern("board"), 0);
@@ -64,10 +67,7 @@ static VALUE evaluate_game_opt(VALUE self, VALUE game) {
   return INT2FIX(total_score);
 }
 
-
-
-
-void Init_alphabeta() {
+void Init_alphabeta_optimizations() {
   rb_mRothelo = rb_define_module("Rothelo");
   rb_mHeuristics = rb_define_module_under(rb_mRothelo, "Heuristics");
   rb_cAlphabeta = rb_define_class_under(rb_mHeuristics, "AlphaBetaPruning", rb_cObject);

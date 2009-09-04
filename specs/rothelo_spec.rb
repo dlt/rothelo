@@ -134,7 +134,7 @@ describe(Rothelo) do
   it 'should have a #over? method that says if game is in a terminal state' do
     @game.over?.should be_false
     @ia_game = Rothelo::Game.new(nil, 1 => {:intelligence => :Dummy}, 2 => {:intelligence => :Dummy})
-    @ia_game.init
+   # @ia_game.init
     @ia_game.over?.should be_true
   end
 

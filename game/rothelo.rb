@@ -18,19 +18,19 @@ module Rothelo
 			init_ia if has_ia_player?
 		end
 
-    def pre_processing
-      discard_changes
-    end
+		def pre_processing
+			discard_changes
+		end
 
-    def post_processing
-      discard_changes
-      unless over? 
-        @ia.play! if ia_player?(current_player)
-      end
-    end
+		def post_processing
+			discard_changes
+			unless over? 
+				@ia.play! if ia_player?(current_player)
+			end
+		end
 
 		def process button
-      pre_processing
+			pre_processing
 			play           = button.x, button.y, current_player
 			self.last_play = play
 		
@@ -39,7 +39,7 @@ module Rothelo
 				update_current_player
 			end
 
-      post_processing
+			post_processing
 		end
 
 		def valid? play
@@ -73,24 +73,24 @@ module Rothelo
 			false
 		end
 
-    def successors
-      ss = []
-      g = Game.new
-      g.board = board.copy
-      g.current_player = current_player
+		def successors
+			ss = []
+			g = Game.new
+			g.board = board.copy
+			g.current_player = current_player
 
-      board.each_field do |x, y, p|
-        ply = [x, y, current_player]
-        ss << ply if g.valid? ply
-      end
+			board.each_field do |x, y, p|
+				ply = [x, y, current_player]
+				ss << ply if g.valid? ply
+			end
 
-      #shuffle to avoid playing always in one 'side' of the board
-      ss.shuffle.each do |ply|
-        x, y, p = ply
-        g.process  Heuristics::MockButton.new(x, y)
-        yield(x, y, g)
-      end
-    end
+			#shuffle to avoid playing always in one 'side' of the board
+			ss.shuffle.each do |ply|
+				x, y, p = ply
+				g.process  Heuristics::MockButton.new(x, y)
+				yield(x, y, g)
+			end
+		end
 
 		private
 		def validate_verticals(x, y, player)
@@ -286,7 +286,7 @@ module Rothelo
 
 		def iafactory
 			Heuristics::AlphaBetaPruning.new self
-      #Heuristics::Dummy.new self
+			#Heuristics::Dummy.new self
 		end
 	end
 end

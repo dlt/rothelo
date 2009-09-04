@@ -1,3 +1,3 @@
 require 'mkmf'
 
-create_makefile('alphabeta')
+create_makefile('alphabeta_optimizations')

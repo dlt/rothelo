@@ -36,6 +36,10 @@ describe(Rothelo::Heuristics) do
     it 'should have a #evaluate_state method to evaluate board states based on the number/position of pieces' do
       @alphabeta.evaluate_state(@game).should == 0
     end
+
+    it 'should have an optimized #evaluate_state_opt method that yields the same result as #evaluate_state' do
+      @alphabeta.evaluate_state(@game).should == @alphabeta.evaluate_game_opt(@game)
+    end
   end
 
 end
